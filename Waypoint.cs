@@ -69,7 +69,7 @@ namespace GPXparser
                         Time = ParseDateTimeString(datetimestring);
                     }
                 }
-                if (reader.NodeType == XmlNodeType.EndElement && (reader.Name == "trkpt" || reader.Name == "rtept"))
+                if (reader.NodeType == XmlNodeType.EndElement && reader.IsWaypoint())
                 {
                     break;
                 }
@@ -90,6 +90,10 @@ namespace GPXparser
                 Convert.ToInt32(elems[4]),
                 Convert.ToInt32(elems[5]));
         }
+
         #endregion
+        
     }
+
+
 }

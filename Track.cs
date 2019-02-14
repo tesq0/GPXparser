@@ -44,12 +44,16 @@ namespace GPXparser
             /// </summary>
             public double AbsoluteDescent { get; set; }
             /// <summary>
+            /// Number of waypoints on the track.
+            /// </summary>
+            public int WaypointCount { get; set; }
+            /// <summary>
             /// Produces a string summarizing the track statistics.
             /// </summary>
             /// <returns>String summary.</returns>
             public override string ToString()
             {
-                return $"{Length:0.00} km at avg. speed of {AverageSpeed:0.00} km/h ({AverageSpeedInMotion:0.00} km/h in motion), {AbsoluteClimb:0.0} m up and {AbsoluteDescent:0.0} m down.";
+                return $"With {WaypointCount} waypoints. {Length:0.00} km at avg. speed of {AverageSpeed:0.00} km/h ({AverageSpeedInMotion:0.00} km/h in motion), {AbsoluteClimb:0.0} m up and {AbsoluteDescent:0.0} m down.";
             }
         }
         #endregion
@@ -174,6 +178,7 @@ namespace GPXparser
         private void ComputeStatistics()
         {
             TrackStatistics trackStatistics = new TrackStatistics();
+            trackStatistics.WaypointCount = Waypoints.Count;
             for (int i = 0; i < Waypoints.Count - 1; i++)
             {
                 Waypoint w1 = Waypoints[i];
@@ -201,7 +206,7 @@ namespace GPXparser
             trackStatistics.AverageSpeedInMotion = trackStatistics.Length / trackStatistics.TimeInMotion.TotalHours;
             statisics = trackStatistics;
         }
-
+        
         private void Read(XmlReader reader)
         {
             Waypoints.Clear();
@@ -209,7 +214,7 @@ namespace GPXparser
             {
                 if (reader.IsStartElement())
                 {
-                    if (reader.Name == "trkpt" || reader.Name == "rtept")
+                    if (reader.IsWaypoint())
                     {
                         Waypoint wp = new Waypoint();
                         wp.Read(reader);
@@ -221,7 +226,7 @@ namespace GPXparser
                         this.Name = reader.Value.Trim();
                     }
                 }
-                if (reader.NodeType == XmlNodeType.EndElement && (reader.Name == "trk" || reader.Name == "rte"))
+                if (reader.NodeType == XmlNodeType.EndElement && reader.IsTrack())
                 {
                     break;
                 }

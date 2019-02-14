@@ -14,7 +14,7 @@ namespace ReaderTest
             List<Track> tracks = Track.ReadTracksFromFile(args[0]);
             foreach (var track in tracks)
             {
-                Console.WriteLine(track.Name + ": ");
+                Console.WriteLine($"Track name: {track.Name}");
                 Console.WriteLine(track.Statistics.ToString());
                 Console.WriteLine();
             }
